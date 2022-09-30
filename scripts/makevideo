@@ -1,0 +1,13 @@
+#!/bin/bash
+
+$source="frames"
+
+
+if [[ -v $1 ]]; then
+    $source=$1
+fi;
+
+rm *.png 2>/dev/null
+ffmpeg -y -r 60 -i $source/%07d.png -vcodec libx264 -crf 17 -pix_fmt yuv420p video_h264.mp4
+ffmpeg -y -i video_h264.mp4 -vf "fps=25,scale=400:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 output.gif
+shuf -zn10 -e frames/*.png | xargs -0 cp -vt $PWD

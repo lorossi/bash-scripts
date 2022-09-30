@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [[ $1 == "-h" ]]; then
+    echo "The script will navigate to all the subfolder and check if they have uncommitted changes in the repos"
+    echo "Usage: $0 [--show-clean | -c] [--show-uninitialized | -u] [--auto-commit | -a]"
+    echo "    --show-clean: don't show folders with no uncommited changes"
+    echo "    --show-uninitialized: show folders with no git repo"
+    echo "    --auto-commit: automatically commit changes"
+    exit 0
+fi
+
+showclean=false
+showuninitialized=false
+autocommit=false
+
+for i in "$@"; do
+    if [[ $i == "--show-clean" || $i == "-c" ]]; then
+        showclean=true
+        elif [[ $i == "--show-uninitialized" || $i == "-u" ]]; then
+        showuninitialized=true
+        elif [[ $i == "--auto-commit" || $i == "-a" ]]; then
+        autocommit=true
+    fi
+done
+
+red='\033[1;31m'
+green='\033[1;32m'
+yellow='\033[93m'
+reset='\033[0m'
+
+for folder in */; do
+    path=$PWD/$folder
+    if [[ ! -d $path/.git ]]; then
+        if $showuninitialized; then
+            echo -e "$yellow$path$reset is not a git repo"
+        fi;
+        continue
+    fi;
+    
+    num=$(cd $path && git status --porcelain=v1 2>/dev/null | wc -l)
+    name=$(cd $path && basename `git rev-parse --show-toplevel`)
+    found=false
+    if [[ $num -gt 0 ]]; then
+        echo -e -n "$red$num uncommitted changes$reset "
+        found=true
+        elif $showclean; then
+        echo -e -n "${green}No uncommitted changes$reset "
+        found=true
+    fi
+    
+    if $found; then
+        echo -e "in $yellow${path::-1}$reset, repo $yellow$name$reset"
+        
+        if $autocommit; then
+            cd $path
+            git add .
+            git commit -m "auto-commit"
+            git push
+            
+            echo -e "   ${red}changes auto committed and pushed$reset"
+        fi
+    fi
+done

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+play -q -n synth whitenoise synth pinknoise mix

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+default_frequency=130
+default_mode=study
+
+declare -A modes
+modes["alert"]="24 32"
+modes["study"]="16 24"
+modes["relax"]="12 16"
+modes["creative"]="6 16"
+modes["sleep"]="1 2"
+
+
+# display help
+if [[ $1 = "-h" ]]; then
+    echo -e -n "use: binaural ["
+    echo -e -n "${!modes[@]}"
+    echo -e "] [base-frequency].\n\tDefaults to: binaural $default_mode $default_frequency"
+    exit 0
+fi
+
+# parse mode
+if [[ ! -v modes[$1] && -n $1 ]]; then
+    echo -e "$1 is not a valid mode. Use parameter -h to have more information."
+    exit -1
+    elif [[ -z $1 ]]; then
+    mode=$default_mode
+else
+    mode=$1
+fi;
+
+# parse base frequency
+if [[ -z $2 ]]; then
+    frequency=$default_frequency
+    elif [[ $2 =~ ^[0-9]+$ ]]; then
+    frequency=$2
+else
+    echo "provide a valid base frequency (in HZ)"
+    exit -2
+fi
+
+# get the frequencies delta
+[[ ${modes[$mode]} =~ ^[0-9]+ ]] && df0=${BASH_REMATCH[0]}
+[[ ${modes[$mode]} =~ [0-9]+$ ]] && df1=${BASH_REMATCH[0]}
+
+# tell the user some stats
+echo -e "Playing mode $mode, base frequency $frequency Hz, tones at $(expr $frequency + $df0) Hz and $(expr $frequency + $df1) Hz."
+
+# play the sound
+play -q -n synth sine $frequency remix 1 0 \
+synth sine $(expr $frequency + $df0) remix 0 1 \
+synth sine $(expr $frequency + $df1) remix 0 1
