@@ -36,7 +36,7 @@ Use:
 - `makevideo` will make a video from all the images in the `frames` subfolder
 - `makevideo [path]` will make a video from all the images in the provided path
 
-## #Noise
+### Noise
 
 Makes a mixture of white and pink noise to have some background sound.
 
@@ -45,6 +45,17 @@ This script requires `sox` in order to work.
 Use:
 
 - `noise` will play noise on a loop
+
+### Randomfile
+
+Fills a file with random ASCII characters.
+
+Use:
+
+- `randomfile -h` show script help and default values
+- `randomfile [path] [cols] [rows]` will fill the file at the provided path with random ASCII characters. The file will be `cols` columns wide and `rows` long.
+  - if `cols` is not provided, it will be set to 80
+  - if `rows` is not provided, it will be set to 40
 
 ### Uncommitted
 
