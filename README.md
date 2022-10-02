@@ -46,6 +46,15 @@ Use:
 
 - `noise` will play noise on a loop
 
+### Rainbow
+
+Gives a little color to your terminal.
+Pipe any command into it or call a command with it to have a rainbow effect on the output.
+
+Use:
+
+- `command | rainbow` will print the output of the command with a rainbow effect
+
 ### Randomfile
 
 Fills a file with random ASCII characters.
