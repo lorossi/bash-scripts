@@ -2,16 +2,13 @@
 
 # get help in order to know the usage of the script
 if [[ $1 = "-h" || $# = 0 ]]; then
-    echo "Usage: randomfile [file path] [number of rows] [number of columns]"
+    echo "Usage: randomfile path [number of rows] [number of columns]"
     exit 0
 fi
 
 # load file path from arguments
 if [[ -z $1 ]]; then
     echo "No file path given"
-    exit 1
-    elif [[ ! -f $1 ]]; then
-    echo "File path is not a file"
     exit 1
 fi
 
