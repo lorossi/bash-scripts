@@ -27,9 +27,6 @@ Use:
 
 Produces a `GIF` and a `.mp4` video coded in x264 from a folder full of images in `.png` format.
 All the images must be named in the format `0000000.png`, `0000001.png`, etc.
-It will also saves some random frames in the parent folder.
-
-**Warning** this script will delete all the `.png` images in the `cwd`.
 
 Use:
 
