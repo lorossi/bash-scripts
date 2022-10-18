@@ -1,6 +1,15 @@
 #!/bin/bash
 
-$source="frames"
+
+source="frames"
+zeroes="1"
+
+format_filename () {
+    BASE=10
+    full=$(($BASE**$1))
+    filename=${full:1}.png
+    echo $filename
+}
 
 
 if [[ -v $1 ]]; then
@@ -12,7 +21,24 @@ if [[ -v $1 ]]; then
     fi
 fi
 
+while [[ true ]]; do
+    filename=$(format_filename $zeroes)
+    
+    if [[ -f $source/$filename ]]; then
+        break
+    else
+        ((zeroes++))
+    fi
+    
+    if [[ $zeroes -gt 18 ]]; then
+        echo "No frames found in folder $source"
+        exit 1
+    fi
+    
+done
+
 echo "Using $source as source directory"
 
-ffmpeg -y -r 60 -i $source/%07d.png -vcodec libx264 -crf 17 -pix_fmt yuv420p video_h264.mp4
+source_files=$(echo $source/%0${zeroes}d.png)
+ffmpeg -y -r 60 -i $source_files -vcodec libx264 -crf 17 -pix_fmt yuv420p video_h264.mp4
 ffmpeg -y -i video_h264.mp4 -vf "fps=25,scale=400:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 output.gif
