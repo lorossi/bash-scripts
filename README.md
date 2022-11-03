@@ -21,7 +21,7 @@ Use:
 
 - `binaural` will play a binaural tone with default settings
 - `binaural -h` shows help and default settings
-- `binaural [mode] [frequency]` will play a binaural tone with the specified settings. Refer to the help for more information on the parameters
+- `binaural [mode] [frequency] [harmonics]` will play a binaural tone with the specified settings. Refer to the help for more information on the parameters
 
 ### Makevideo
 

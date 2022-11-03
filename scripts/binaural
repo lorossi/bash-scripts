@@ -1,7 +1,8 @@
 #!/bin/bash
 
-default_frequency=130
+default_frequency=100
 default_mode=study
+default_harmonics=5
 
 declare -A modes
 modes["alert"]="24 32"
@@ -15,7 +16,8 @@ modes["sleep"]="1 2"
 if [[ $1 = "-h" ]]; then
     echo -e -n "use: binaural ["
     echo -e -n "${!modes[@]}"
-    echo -e "] [base-frequency].\n\tDefaults to: binaural $default_mode $default_frequency"
+    echo -e -n "] [basefrequency] [harmonics_number] ."
+    echo -e -n "\t\tDefaults to: binaural $default_mode $default_frequency $default_harmonics"
     exit 0
 fi
 
@@ -39,14 +41,33 @@ else
     exit -2
 fi
 
+# parse harmonics number
+if [[ -z $3 ]]; then
+    harmonics=$default_harmonics
+    elif [[ $3 =~ ^[0-9]+$ ]]; then
+    harmonics=$3
+else
+    echo "provide a valid harmonics number"
+    exit -3
+fi
+
 # get the frequencies delta
 [[ ${modes[$mode]} =~ ^[0-9]+ ]] && df0=${BASH_REMATCH[0]}
 [[ ${modes[$mode]} =~ [0-9]+$ ]] && df1=${BASH_REMATCH[0]}
 
-# tell the user some stats
-echo -e "Playing mode $mode, base frequency $frequency Hz, tones at $(expr $frequency + $df0) Hz and $(expr $frequency + $df1) Hz."
+# create the command
+command="play -q -n synth sine $(expr $frequency) remix 1 1"
+for ((i=0; i<$harmonics; i++)); do
+    harmonic_f=$((($i+2)**2))
+    command="$command synth sine $(($frequency + $df0 + $harmonic_f)) remix 1 0 \
+    synth sine $(($frequency + $df1 + $harmonic_f)) remix 0 1"
+done
+command="$command remix -"
 
-# play the sound
-play -q -n synth sine $frequency remix 1 0 \
-synth sine $(expr $frequency + $df0) remix 0 1 \
-synth sine $(expr $frequency + $df1) remix 0 1
+# tell the user some stats
+echo -e "Playing mode $mode, base frequency $frequency Hz, \
+tones at $(expr $frequency + $df0) Hz and $(expr $frequency + $df1) Hz, \
+$harmonics harmonics"
+
+# play the command
+eval $command
