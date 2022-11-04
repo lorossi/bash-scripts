@@ -31,23 +31,27 @@ if [[ $1 = "-h" ]]; then
 fi
 
 # load source folder from the command line
-if [[ ! -v $1 && -d $1 ]]; then
-    source=$1
-else
-    echo "Directory $1 does not exist"
+if [[ -n $1 ]]; then
+    if [[-d $1 ]]; then
+        source=$1
+    else
+        echo "Directory $1 does not exist"
+        exit 1
+    fi
+    elif [[ ! -d $source ]]; then
+    echo "Directory $source does not exist"
     exit 1
 fi
 
 # load video filename from the command line
-if [[ ! -v $2 ]]; then
+if [[ -n $2 ]]; then
     output_video=$(add_extension $2 mp4)
 fi
 
 # load gif filename from the command line
-if [[ ! -v $3 ]]; then
+if [[ -n $3 ]]; then
     output_gif=$(add_extension $3 gif)
 fi
-
 
 while [[ true ]]; do
     # find the number of leading digits in the file name
@@ -63,7 +67,6 @@ while [[ true ]]; do
         echo "No frames found in folder $source"
         exit 1
     fi
-    
 done
 
 echo "Using $source as source directory"
@@ -74,3 +77,4 @@ echo "Making video $output_video from folder $source"
 ffmpeg -y -r 60 -i $source_files -vcodec libx264 -crf 17 -pix_fmt yuv420p $output_video -hide_banner -loglevel error
 echo "Making gif $output_gif from folder $source"
 ffmpeg -y -i $output_video -vf "fps=25,scale=400:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 $output_gif -hide_banner -loglevel error
+echo "All done."
