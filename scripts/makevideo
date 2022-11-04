@@ -1,9 +1,11 @@
 #!/bin/bash
 
-
+output_video="video_h264.mp4"
+output_gif="output.gif"
 source="frames"
 zeroes="1"
 
+# add zeroes to the file name
 format_filename () {
     BASE=10
     full=$(($BASE**$1))
@@ -11,17 +13,44 @@ format_filename () {
     echo $filename
 }
 
-
-if [[ -v $1 ]]; then
-    if [[ -d $1 ]]; then
-        $source=$1
+# add extension to file name if not present
+add_extension () {
+    if [[ $1 != *".$2" ]]; then
+        filename=$1.$2
     else
-        echo "Directory $1 does not exist"
-        exit 1
+        filename=$1
     fi
+    echo $filename
+}
+
+# show usage
+if [[ $1 = "-h" ]]; then
+    echo -e "use: makevideo [source] [output_video] [output_gif]"
+    echo -e "\t\tDefaults to: makevideo $source $output_video $output_gif"
+    exit 0
 fi
 
+# load source folder from the command line
+if [[ ! -v $1 && -d $1 ]]; then
+    source=$1
+else
+    echo "Directory $1 does not exist"
+    exit 1
+fi
+
+# load video filename from the command line
+if [[ ! -v $2 ]]; then
+    output_video=$(add_extension $2 mp4)
+fi
+
+# load gif filename from the command line
+if [[ ! -v $3 ]]; then
+    output_gif=$(add_extension $3 gif)
+fi
+
+
 while [[ true ]]; do
+    # find the number of leading digits in the file name
     filename=$(format_filename $zeroes)
     
     if [[ -f $source/$filename ]]; then
@@ -40,5 +69,8 @@ done
 echo "Using $source as source directory"
 
 source_files=$(echo $source/%0${zeroes}d.png)
-ffmpeg -y -r 60 -i $source_files -vcodec libx264 -crf 17 -pix_fmt yuv420p video_h264.mp4
-ffmpeg -y -i video_h264.mp4 -vf "fps=25,scale=400:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 output.gif
+
+echo "Making video $output_video from folder $source"
+ffmpeg -y -r 60 -i $source_files -vcodec libx264 -crf 17 -pix_fmt yuv420p $output_video -hide_banner -loglevel error
+echo "Making gif $output_gif from folder $source"
+ffmpeg -y -i $output_video -vf "fps=25,scale=400:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 $output_gif -hide_banner -loglevel error

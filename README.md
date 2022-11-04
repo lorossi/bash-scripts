@@ -32,6 +32,7 @@ Use:
 
 - `makevideo` will make a video from all the images in the `frames` subfolder
 - `makevideo [path]` will make a video from all the images in the provided path
+- `makevideo [path] [output_video] [output_gif]` will make a video and a gif from all the images in the provided path, with the provided names
 
 ### Noise
 
