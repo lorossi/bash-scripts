@@ -53,11 +53,16 @@ for folder in */; do
         
         if $autocommit; then
             cd $path
+            # create a new branch
+            git switch -c auto-commit-$(date +%s)
+            # add all files
             git add .
+            # wow, you are lazy
             git commit -m "auto-commit"
-            git push
+            # push to remote
+            git push --set-upstream origin auto-commit
             
-            echo -e "   ${red}changes auto committed and pushed$reset"
+            echo -e "${red}changes auto committed and pushed$reset"
         fi
     fi
 done

@@ -76,6 +76,7 @@ Use:
 - `uncommitted -s` or `uncommitted --show-clean` will show also the folders that don't have uncommitted changes. By default, only the folders with uncommitted changes are shown.
 - `uncommitted -u` or `uncommitted --show-uninitialized` will show also the folders that are not git repositories. By default, only the folders that are git repositories are shown.
 - `uncommitted -a` or `uncommitted --auto-commit` will auto commit and push all the uncommitted changes. By default, this option is not active.
+  - all the uncommitted data will be pushed into a new branch called `auto-commit-<timestamp>`
 - The parameters can be combined together
 
 ## Credits
