@@ -14,10 +14,8 @@ modes["sleep"]="1 2"
 
 # display help
 if [[ $1 = "-h" ]]; then
-    echo -e -n "use: binaural ["
-    echo -e -n "${!modes[@]}"
-    echo -e -n "] [basefrequency] [harmonics_number] ."
-    echo -e -n "\t\tDefaults to: binaural $default_mode $default_frequency $default_harmonics"
+    echo -n "Use: binaural [${!modes[@]}] [base frequency] [harmonics number]"
+    echo -e "\tDefaults to: binaural $default_mode $default_frequency $default_harmonics\n"
     exit 0
 fi
 
@@ -51,9 +49,12 @@ else
     exit -3
 fi
 
+# regex pattern to get the frequencies delta
+pattern='([0-9]+)\s+([0-9]+)'
 # get the frequencies delta
-[[ ${modes[$mode]} =~ ^[0-9]+ ]] && df0=${BASH_REMATCH[0]}
-[[ ${modes[$mode]} =~ [0-9]+$ ]] && df1=${BASH_REMATCH[0]}
+[[ ${modes[$mode]} =~ $pattern ]]
+df0=${BASH_REMATCH[1]}
+df1=${BASH_REMATCH[2]}
 
 # create the command
 command="play -q -n synth sine $(expr $frequency) remix 1 1"
@@ -65,7 +66,7 @@ done
 command="$command remix -"
 
 # tell the user some stats
-echo -e "Playing mode $mode, base frequency $frequency Hz, \
+echo "Playing mode $mode, base frequency $frequency Hz, \
 tones at $(expr $frequency + $df0) Hz and $(expr $frequency + $df1) Hz, \
 $harmonics harmonics"
 
