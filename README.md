@@ -79,6 +79,12 @@ Use:
   - all the uncommitted data will be pushed into a new branch called `auto-commit-<timestamp>`
 - The parameters can be combined together
 
+### Updateall
+
+Updates the system using the apt package manager.
+
+This script requires `apt` in order to work *(provided by Debian, Ubuntu, and other Debian-based distros)*
+
 ## Credits
 
 This project and all the scripts inside it are distributed under MIT license.

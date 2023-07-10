@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ "$EUID" -ne 0 ]
+then
+    echo -e "\e[31mPlease run as root\e[0m"
+    exit
+fi
+
+# check if deborphan is installed
+if ! [ -x "$(command -v deborphan)" ]
+then
+    echo "deborphan is not installed. Installing..."
+    apt install -y deborphan
+fi
+
+# remove orphaned packages
+deborphan | xargs apt-get -y remove --purge
+# update and clean
+apt clean -y
+apt update -y
+apt upgrade -y
+apt autoremove -y
+apt autoclean -y
