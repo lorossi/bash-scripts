@@ -33,9 +33,9 @@ for folder in */; do
     if [[ ! -d $path/.git ]]; then
         if $showuninitialized; then
             echo -e "$yellow$path$reset is not a git repo"
-        fi;
+        fi
         continue
-    fi;
+    fi
     
     num=$(cd $path && git status --porcelain=v1 2>/dev/null | wc -l)
     name=$(cd $path && basename `git rev-parse --show-toplevel`)
